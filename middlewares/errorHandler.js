@@ -36,7 +36,7 @@ const errorHandler = (err, req, res, next) => {
   //   keyValue: err.keyValue,
   // });
   console.log({ err });
-  res.status(err.statusCode).json(error);
+  res.status(error.statusCode).json(error);
 };
 
 module.exports = errorHandler;

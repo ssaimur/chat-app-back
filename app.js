@@ -8,6 +8,8 @@ require('dotenv').config();
 
 // internal imports
 const authRouter = require('./routers/authRouter');
+const userRouter = require('./routers/userRouter');
+const inboxRouter = require('./routers/inboxRouter');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -21,6 +23,7 @@ app.use(methodOverride('_method'));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 const mongoose = require('mongoose');
+const checkAuth = require('./middlewares/checkAuth');
 
 const url = process.env.MONGO_URI;
 const connect = mongoose.connect(url, {
@@ -60,7 +63,11 @@ const storage = new GridFsStorage({
   },
 });
 
+// set all the routers
 app.use('/api/auth', authRouter);
+app.use(checkAuth);
+app.use('/api/users', userRouter);
+app.use('/api/inbox', inboxRouter);
 
 // custom error handler middleware
 app.use(errorHandler);
