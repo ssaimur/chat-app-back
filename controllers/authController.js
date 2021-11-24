@@ -49,16 +49,14 @@ controllers.registerUser = asyncWrapper(async (req, res) => {
 // Login a user
 //////////////////////////////////////////
 controllers.loginUser = asyncWrapper(async (req, res, next) => {
-  console.log({ body: req.body });
   // find the user
   const user = await User.findOne({
     $or: [{ email: req.body.username }, { username: req.body.username }],
   });
 
-  console.log({ bodypass: req.body, userpass: user });
-
   // check if the user exists
   if (user && user._id) {
+    // bypassing the password hashing and salting
     const isPasswordValid = req.body.password === user.password;
 
     // const isPasswordValid = await bcrypt.compare(

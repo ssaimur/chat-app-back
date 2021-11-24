@@ -14,12 +14,8 @@ const app = express();
 const server = require('http').createServer(app);
 
 // socket connetion
-const io = require('socket.io')(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    credentials: true,
-  },
-});
+const io = require('socket.io')(server);
+
 app.use(
   require('cors')({
     origin: 'http://localhost:3000',
@@ -36,9 +32,6 @@ global.io = io;
 // request persers
 app.use(express.json());
 app.use(morgan('common'));
-app.use((req, res, next) => {
-  console.log({ rewwBody: req.body });
-});
 
 // parse cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -62,7 +55,7 @@ connect.then(
 
 // set all the routers
 app.use('/api/auth', authRouter);
-// app.use(checkAuth);
+app.use(checkAuth);
 app.use('/api/users', userRouter);
 app.use('/api/inbox', inboxRouter);
 
