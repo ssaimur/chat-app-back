@@ -56,10 +56,13 @@ controllers.loginUser = asyncWrapper(async (req, res, next) => {
 
   // check if the user exists
   if (user && user._id) {
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    // bypassing the password hashing and salting
+    const isPasswordValid = req.body.password === user.password;
+
+    // const isPasswordValid = await bcrypt.compare(
+    //   req.body.password,
+    //   user.password
+    // );
 
     // check if the password is valid
     if (isPasswordValid) {

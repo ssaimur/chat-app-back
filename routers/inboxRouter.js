@@ -6,6 +6,8 @@ const {
   createConversation,
   getInbox,
   searchUser,
+  getAConversation,
+  sendMessage,
 } = require('../controllers/inboxController');
 
 const router = express.Router();
@@ -24,5 +26,15 @@ router.get('/', getInbox);
 // Search users
 ////////////////////////////////////////
 router.get('/search', searchUser);
+
+//////////////////////////////
+// get a conversation
+////////////////////////////////////////
+router.get('/messages/:conversation_id', getAConversation);
+
+//////////////////////////////
+// send a message
+////////////////////////////////////////
+router.post('/message', sendMessage);
 
 module.exports = router;

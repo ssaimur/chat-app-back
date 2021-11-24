@@ -1,7 +1,5 @@
 // external imports
 const express = require('express');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const methodOverride = require('method-override');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
@@ -13,11 +11,27 @@ const inboxRouter = require('./routers/inboxRouter');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
+const server = require('http').createServer(app);
+
+// socket connetion
+const io = require('socket.io')(server);
+
+app.use(
+  require('cors')({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
+
+io.on('connection', (socket) => {
+  console.log('connection ,,,');
+});
+
+global.io = io;
 
 // request persers
 app.use(express.json());
 app.use(morgan('common'));
-app.use(methodOverride('_method'));
 
 // parse cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -38,30 +52,6 @@ connect.then(
   },
   (err) => console.log(err)
 );
-
-/* 
-    GridFs Configuration
-*/
-
-// create storage engine
-const storage = new GridFsStorage({
-  db: connect,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads',
-        };
-        resolve(fileInfo);
-      });
-    });
-  },
-});
 
 // set all the routers
 app.use('/api/auth', authRouter);
